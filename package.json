@@ -14,15 +14,16 @@
     "mqtt": "^2.18.8"
   },
   "deprecated": false,
-  "description": "ClearBlade-Node-RED MQTT input, Output & Broker node, a tweaked version of default one to support clearblade mqtt",
+  "description": "ClearBlade-Node-RED MQTT input, Output & Broker (Client) Config node to support clearblade mqtt",
   "devDependencies": {},
   "homepage": "https://github.com/yashjain28/node-red-contrib-clearblade-mqtt#readme",
   "keywords": [
     "node-red",
     "mqtt",
     "clearblade",
-    ""
-
+    "client",
+    "publish",
+    "subscribe"
   ],
   "license": "MIT",
   "main": "none",
