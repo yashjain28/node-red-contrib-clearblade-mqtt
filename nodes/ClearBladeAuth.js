@@ -1,5 +1,5 @@
 var mqtt = require("mqtt");
-
+// Support for MQTT Auth to be added later
 // function ClearBladeMQTTAuth(clearbladeOptions) {
 //     var options = {
 //         query:{}
