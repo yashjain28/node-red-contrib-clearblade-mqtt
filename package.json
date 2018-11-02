@@ -1,0 +1,42 @@
+{
+  "author": {
+    "name": "Yash Jain",
+    "email": "yashkjain1994@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/yashjain28/node-red-contrib-clearblade-mqtt/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "clearblade": "^1.12.2",
+    "https-proxy-agent": "^2.2.1",
+    "is-utf8": "^0.2.1",
+    "mqtt": "^2.18.8"
+  },
+  "deprecated": false,
+  "description": "ClearBlade-Node-RED MQTT input, Output & Broker node, a tweaked version of default one to support clearblade mqtt",
+  "devDependencies": {},
+  "homepage": "https://github.com/yashjain28/node-red-contrib-clearblade-mqtt#readme",
+  "keywords": [
+    "node-red",
+    "mqtt",
+    "clearblade",
+    ""
+
+  ],
+  "license": "MIT",
+  "main": "none",
+  "name": "node-red-contrib-clearblade-mqtt",
+  "node-red": {
+    "nodes": {
+      "mqtt-out-cb": "nodes/mqtt-out-cb.js",
+      "mqtt-in-cb": "nodes/mqtt-in-cb.js",
+      "cb-mqtt-broker": "nodes/cb-mqtt-broker.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yashjain28/node-red-contrib-clearblade-mqtt.git"
+  },
+  "version": "1.0.1"
+}
