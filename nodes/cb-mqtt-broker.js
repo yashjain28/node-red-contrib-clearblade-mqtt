@@ -21,7 +21,9 @@ module.exports = function(RED) {
   var isUtf8 = require("is-utf8");
   var HttpsProxyAgent = require("https-proxy-agent");
   var url = require("url");
-  var ClearBlade = require('clearblade');
+  var cb = require("clearblade");
+  
+  var ClearBladeAuth = require("./ClearBladeAuth");
   
   function matchTopic(ts, t) {
     if (ts == "#") {
@@ -65,12 +67,12 @@ module.exports = function(RED) {
     this.keepalive = n.keepalive;
     this.cleansession = n.cleansession;
 
-    this.clearblade =ClearBlade;
+    this.ClearBladeAuth = ClearBladeAuth;
     this.clearbladesystemkey = n.clearbladesystemkey;
     this.clearbladesystemsecret = n.clearbladesystemsecret;
     this.clearbladeuser = n.clearbladeuser;
     this.clearbladepassword = n.clearbladepassword;
-    
+    this.clearbladeplatformurl = n.clearbladeplatformurl;
     // Config node state
     this.brokerurl = "";
     this.connected = false;
@@ -232,7 +234,7 @@ module.exports = function(RED) {
       options.password =node.clearbladepassword;
       options.messagingURI = node.broker;
       options.messagingPort = node.port;
-      options.URI = "https://"+node.broker;
+      options.URI = node.clearbladeplatformurl;
       return options;
     }
 
@@ -244,20 +246,16 @@ module.exports = function(RED) {
             if(err){
               console.log("-----ERROR INIT CLEARBLADE-------")
               console.log(err, data);
+              // In case user name and password are passed in the Security Section
               node.connect();
             }
             else{
-              console.log("Logging in clearblade init callback");
-              console.log(data);
               node.options.username = data.authToken;
               node.options.password = clearbladeOptions.systemKey;
-              console.log(node.options);
               node.connect();
             }
         }
-        node.clearblade.init(clearbladeOptions);
-
-        //node.connect();
+        node.ClearBladeAuth(clearbladeOptions);
       }
     };
 
@@ -282,7 +280,7 @@ module.exports = function(RED) {
         node.connecting = true;
         try {
           //console.log("MQTT broker this in Connect:", this);
-         // console.log("MQTT broker config:", node.credentials);
+         // console.log("MQTT broker config:", node.options);
           node.client = mqtt.connect(
             node.brokerurl,
             node.options
