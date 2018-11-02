@@ -55,8 +55,6 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, n);
 
     // Configuration options passed by Node Red
-    console.log("Value of n:", n);
-    console.log("-------------------------------");
     this.broker = n.broker;
     this.port = n.port;
     this.clientid = n.clientid;
@@ -99,8 +97,6 @@ module.exports = function(RED) {
         retain: n.closeRetain == "true" || n.closeRetain === true
       };
     }
-    console.log("MQTT config:", this);
-    //console.log("MQTT broker config:", this.credentials);
     if (this.credentials) {
       this.username = this.credentials.user;
       this.password = this.credentials.password;
@@ -204,8 +200,7 @@ module.exports = function(RED) {
         tlsNode.addTLSOptions(this.options);
       }
     }
-    // console.log(this.brokerurl,this.options);
-
+   
     // If there's no rejectUnauthorized already, then this could be an
     // old config where this option was provided on the broker node and
     // not the tls node
@@ -244,8 +239,9 @@ module.exports = function(RED) {
         var clearbladeOptions = setClearBladeOptions();
         clearbladeOptions.callback = function(err, data){
             if(err){
-              console.log("-----ERROR INIT CLEARBLADE-------")
+              console.log("-----ERROR Authenticating to CLEARBLADE-------")
               console.log(err, data);
+              node.error("Clearblade Auth Failed: "+ data);
               // In case user name and password are passed in the Security Section
               node.connect();
             }
@@ -279,8 +275,6 @@ module.exports = function(RED) {
       if (!node.connected && !node.connecting) {
         node.connecting = true;
         try {
-          //console.log("MQTT broker this in Connect:", this);
-         // console.log("MQTT broker config:", node.options);
           node.client = mqtt.connect(
             node.brokerurl,
             node.options

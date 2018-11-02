@@ -10,7 +10,8 @@
       "clearblade_username":"ClearBlade Username",
       "clearblade_password":"ClearBlade Password",
       "clearblade_systemKey":"ClearBlade SystemKey",
-      "clearblade_systemSecret":"ClearBlade SystemSecret"
+      "clearblade_systemSecret":"ClearBlade SystemSecret",
+      "clearblade_platformurl":"ClearBlade PlatformURL"
     },
     "status": {
       "connected": "connected",
