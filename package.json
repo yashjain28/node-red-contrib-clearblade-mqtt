@@ -39,5 +39,5 @@
     "type": "git",
     "url": "git+https://github.com/yashjain28/node-red-contrib-clearblade-mqtt.git"
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
