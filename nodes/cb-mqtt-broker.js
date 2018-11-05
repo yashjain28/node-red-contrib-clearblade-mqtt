@@ -64,6 +64,7 @@ module.exports = function(RED) {
     this.compatmode = n.compatmode;
     this.keepalive = n.keepalive;
     this.cleansession = n.cleansession;
+    this.reconnectPeriod = n.reconnectperiod;
 
     this.ClearBladeAuth = ClearBladeAuth;
     this.clearbladesystemkey = n.clearbladesystemkey;
@@ -189,7 +190,7 @@ module.exports = function(RED) {
     this.options.password = this.password;
     this.options.keepalive = this.keepalive;
     this.options.clean = this.cleansession;
-    this.options.reconnectPeriod = RED.settings.mqttReconnectTime || 5000;
+    this.options.reconnectPeriod = this.reconnectPeriod || 1000;
     if (this.compatmode == "true" || this.compatmode === true) {
       this.options.protocolId = "MQIsdp";
       this.options.protocolVersion = 3;

@@ -42,6 +42,7 @@
       "clientid": "Client ID",
       "port": "Port",
       "keepalive": "Keep alive time (s)",
+      "reconnectperiod":"Reconnect Period(ms)",
       "cleansession": "Use clean session",
       "use-tls": "Enable secure (SSL/TLS) connection",
       "tls-config": "TLS Configuration",
