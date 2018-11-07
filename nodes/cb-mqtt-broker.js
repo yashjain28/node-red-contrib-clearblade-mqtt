@@ -66,7 +66,7 @@ module.exports = function(RED) {
     this.cleansession = n.cleansession;
     this.reconnectPeriod = n.reconnectperiod;
 
-    this.ClearBladeAuth = ClearBladeAuth;
+    this.ClearBladeAuth = ClearBladeAuth();
     this.clearbladesystemkey = n.clearbladesystemkey;
     this.clearbladesystemsecret = n.clearbladesystemsecret;
     this.clearbladeuser = n.clearbladeuser;
@@ -231,28 +231,30 @@ module.exports = function(RED) {
       options.messagingURI = node.broker;
       options.messagingPort = node.port;
       options.URI = node.clearbladeplatformurl;
+
       return options;
     }
 
+     function CBAuthSuccess(data) {
+       node.options.username = data.authToken;
+       node.options.password = node.clearbladesystemkey;
+       node._connect();
+    }
+    function CBAuthFailure(data){
+         console.log("-----ERROR Authenticating to CLEARBLADE-------");
+         console.log(data);
+         node.error("Clearblade Auth Failed: " + data);
+         node.debug("Attempting to connect if Creds exist in Security Section..");
+         // In case user name and password are passed in the Security Section
+         node._connect();
+     };
+
     this.register = function(mqttNode) {
+      console.log("---------IN REGISTER---------");
       node.users[mqttNode.id] = mqttNode;
       if (Object.keys(node.users).length === 1) {
         var clearbladeOptions = setClearBladeOptions();
-        clearbladeOptions.callback = function(err, data){
-            if(err){
-              console.log("-----ERROR Authenticating to CLEARBLADE-------")
-              console.log(err, data);
-              node.error("Clearblade Auth Failed: "+ data);
-              // In case user name and password are passed in the Security Section
-              node.connect();
-            }
-            else{
-              node.options.username = data.authToken;
-              node.options.password = clearbladeOptions.systemKey;
-              node.connect();
-            }
-        }
-        node.ClearBladeAuth(clearbladeOptions);
+        node.ClearBladeAuth.Authenticate(clearbladeOptions).then(CBAuthSuccess, CBAuthFailure);
       }
     };
 
@@ -272,25 +274,22 @@ module.exports = function(RED) {
       done();
     };
 
-    this.connect = function() {
+    this._connect = function(){
+      console.log("------in _connect -------");
       if (!node.connected && !node.connecting) {
         node.connecting = true;
         try {
-          node.client = mqtt.connect(
-            node.brokerurl,
-            node.options
-          );
+          node.client = mqtt.connect( node.brokerurl, node.options );
           node.client.setMaxListeners(0);
           // Register successful connect or reconnect handler
           node.client.on("connect", function() {
             node.connecting = false;
             node.connected = true;
-            node.log(
-              RED._("mqtt.state.connected", {
+            node.log(RED._("mqtt.state.connected", {
                 broker:
-                  (node.clientid ? node.clientid + "@" : "") + node.brokerurl
-              })
-            );
+                  (node.clientid ? node.clientid + "@" : "") +
+                  node.brokerurl
+              }));
             for (var id in node.users) {
               if (node.users.hasOwnProperty(id)) {
                 node.users[id].status({
@@ -339,12 +338,11 @@ module.exports = function(RED) {
           node.client.on("close", function() {
             if (node.connected) {
               node.connected = false;
-              node.log(
-                RED._("mqtt.state.disconnected", {
+              node.log(RED._("mqtt.state.disconnected", {
                   broker:
-                    (node.clientid ? node.clientid + "@" : "") + node.brokerurl
-                })
-              );
+                    (node.clientid ? node.clientid + "@" : "") +
+                    node.brokerurl
+                }));
               for (var id in node.users) {
                 if (node.users.hasOwnProperty(id)) {
                   node.users[id].status({
@@ -355,12 +353,11 @@ module.exports = function(RED) {
                 }
               }
             } else if (node.connecting) {
-              node.log(
-                RED._("mqtt.state.connect-failed", {
+              node.log(RED._("mqtt.state.connect-failed", {
                   broker:
-                    (node.clientid ? node.clientid + "@" : "") + node.brokerurl
-                })
-              );
+                    (node.clientid ? node.clientid + "@" : "") +
+                    node.brokerurl
+                }));
             }
           });
 
@@ -371,6 +368,24 @@ module.exports = function(RED) {
           console.log(err);
         }
       }
+    }  
+    this.connect = function() {
+      console.log("------In connect-------");
+      node.ClearBladeAuth.CheckAuth(node.options.username).then(function(data){
+        console.log("In check auth response...");
+        if (data){
+          if(data.is_authenticated) {  
+            node._connect();
+          }
+          else{
+            var clearbladeOptions = setClearBladeOptions();
+            node.ClearBladeAuth.Authenticate(clearbladeOptions).then(CBAuthSuccess, CBAuthFailure);
+          }
+        }
+      }, function(err){
+          CBAuthFailure(err);
+      });
+
     };
 
     this.subscribe = function(topic, qos, callback, ref) {
