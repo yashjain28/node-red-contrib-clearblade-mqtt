@@ -30,6 +30,7 @@ var mqtt = require("mqtt");
 // }
 function ClearBladeAuth() {
   var Q = require("q");
+  var request = require('request');
   var ClearBlade = require("clearblade");
   var _options = {};
   function Authenticate(options) {
@@ -40,7 +41,7 @@ function ClearBladeAuth() {
     var deferred = Q.defer();
     options.callback = function(err, data) {
       if (err) {
-        deferred.reject(data);
+        deferred.reject(err);
       } else {
         deferred.resolve(data);
       }
