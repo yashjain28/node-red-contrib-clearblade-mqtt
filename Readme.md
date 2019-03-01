@@ -20,9 +20,12 @@
     * Enable tls: check box
     * ClientId: UniqueClientId
 
-This information will be used to dynamically authenticate user to the platform (using https, auth using mqtt will be added in the future). For more details about mqtt at ClearBlade refer: https://docs.clearblade.com/v/3/4-developer_reference/MQTT/
+    This information will be used to dynamically authenticate user to the platform (using https, auth using mqtt will be added in the future). For more details about mqtt at ClearBlade refer: https://docs.clearblade.com/v/3/4-developer_reference/MQTT/
 
-5. For non-tls, set the port as 1883, to use tls, just select the tls checkbox and use port 1884.  
+5. For non-tls, set the port as 1883, to use tls, just select the tls checkbox and use port 1884.
+6. For sending data to the `edge`, the following parameters might need some update:
+    - Server/Broker URL: \<ip-address-of-the-edge>
+    - ClearBlade PlatformUrl: http://\<ip-address-of-the-edge>:9000 
 6. Once Config is done, set the topics, qos and other details as per requirement in the 'mqtt in/out cb' nodes, which is similar to Node-Red's core MQTT nodes. 
 7. Finally, hit deploy.
 
