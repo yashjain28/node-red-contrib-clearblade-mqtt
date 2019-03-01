@@ -12,7 +12,8 @@
     "https-proxy-agent": "^2.2.1",
     "is-utf8": "^0.2.1",
     "mqtt": "^2.18.8",
-    "q": "^1.5.1"
+    "q": "^1.5.1",
+    "request": "^2.88.0"
   },
   "deprecated": false,
   "description": "ClearBlade-Node-RED MQTT input, Output & Broker (Client) Config node to support clearblade mqtt",
