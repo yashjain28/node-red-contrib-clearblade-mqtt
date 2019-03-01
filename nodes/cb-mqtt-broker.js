@@ -222,7 +222,7 @@ module.exports = function(RED) {
     // Define functions called by MQTT in and out nodes
     var node = this;
     this.users = {};
-    function setClearBladeOptions(){
+    function getClearBladeOptions(){
       var options = {};
       options.systemKey =  node.clearbladesystemkey;
       options.systemSecret = node.clearbladesystemsecret;
@@ -253,7 +253,8 @@ module.exports = function(RED) {
       console.log("---------IN REGISTER---------");
       node.users[mqttNode.id] = mqttNode;
       if (Object.keys(node.users).length === 1) {
-        var clearbladeOptions = setClearBladeOptions();
+        var clearbladeOptions = getClearBladeOptions();
+        console.log("Set CB Options", clearbladeOptions);
         node.ClearBladeAuth.Authenticate(clearbladeOptions).then(CBAuthSuccess, CBAuthFailure);
       }
     };
@@ -363,22 +364,26 @@ module.exports = function(RED) {
 
           // Register connect error handler
           // The client's own reconnect logic will take care of errors
-          node.client.on("error", function(error) {});
+          node.client.on("error", function(error) {
+            console.log("GOT SOME ERROR:", error);
+            if(error && error.code === 4){
+              //console.log("Trying to Re-Auth");
+              //node.connect();
+            }
+          });
         } catch (err) {
           console.log(err);
         }
       }
     }  
     this.connect = function() {
-      console.log("------In connect-------");
       node.ClearBladeAuth.CheckAuth(node.options.username).then(function(data){
-        console.log("In check auth response...");
         if (data){
           if(data.is_authenticated) {  
             node._connect();
           }
           else{
-            var clearbladeOptions = setClearBladeOptions();
+            var clearbladeOptions = getClearBladeOptions();
             node.ClearBladeAuth.Authenticate(clearbladeOptions).then(CBAuthSuccess, CBAuthFailure);
           }
         }

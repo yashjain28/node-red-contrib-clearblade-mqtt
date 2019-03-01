@@ -35,11 +35,13 @@ function ClearBladeAuth() {
   var _options = {};
   function Authenticate(options) {
     _options = Object.assign(options);
-    if (!options.URI) {
-      options.URI = "https://" + options.messagingURI;
-    }
+    // if (!options.URI) {
+    //   options.URI = "http://" + options.messagingURI;
+    // }
+    console.log("Authenticate Options:", options)
     var deferred = Q.defer();
     options.callback = function(err, data) {
+      console.log("Init Response", err, data);
       if (err) {
         deferred.reject(err);
       } else {
@@ -51,7 +53,7 @@ function ClearBladeAuth() {
   }
 
   function CheckAuth(authToken, callback) {
-    const uri = "https://" + _options.messagingURI + "/api/v/1/user/checkauth";
+    const uri = _options.URI + "/api/v/1/user/checkauth";
     requestOptions = {
       url: uri,
       method: "POST",
@@ -62,6 +64,7 @@ function ClearBladeAuth() {
     };
      var deferred = Q.defer();
     request(requestOptions, function(error, response, body) {
+      console.log("CheckAuth Response:::", error, "-----RESPONSE------", response, "------BODY------", body);
       if (error) {
         deferred.reject(error);
       }
